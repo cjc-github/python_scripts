@@ -299,7 +299,7 @@ class RunCmd:
             # 这个参数只有cmd和args
             print(e.cmd, e.args)
         except subprocess.CalledProcessError as e:
-            print(f"return code ：{e.returncode}")
+            print(f"return code :{e.returncode}")
         except Exception as e:
             print(f"Error running command: {e.args}")
 
