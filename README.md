@@ -1,6 +1,6 @@
 # pyscripts
  some python scripts
 
-pythonµÄ°æ±¾£º
+pythonç‰ˆæœ¬ï¼š
 python 3.8.10
 
