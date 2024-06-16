@@ -527,10 +527,10 @@ if __name__ == "__main__":
     # rc.run_cmd2()  # os.popen
     # rc.run_cmd3()  # subprocess.Popen
     # rc.run_cmd3_new()  # subprocess.Popen
-    # rc.run_cmd4()  # subprocess.call
+    rc.run_cmd4()  # subprocess.call
     # rc.run_cmd5()  # exec
     # rc.run_cmd6()  # subprocess.run
-    rc.run_cmd7()  # subprocess.check_call
+    # rc.run_cmd7()  # subprocess.check_call
     # rc.run_cmd8()  # subprocess.check_output
     # execv没啥用
     # rc.run_cmd9()  # os.execv

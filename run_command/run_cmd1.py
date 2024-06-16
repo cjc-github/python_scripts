@@ -17,38 +17,41 @@ class CommandResult:
 
 def run_cmd(args, mem=False, cpu=False, timeout=5, interval_time=1):
     start_time = time.time()
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    memory_info_list, cpu_percent_list = [], []
+        memory_info_list, cpu_percent_list = [], []
 
-    while p.poll() is None:
-        if mem:
-            # 每秒获取内存量
-            mem_usage = psutil.Process(p.pid).memory_info().rss
-            memory_info_list.append(mem_usage)
-            print(f"mem_usage:{mem_usage}", end=" ")
-        if cpu:
-            # 每秒获取cpu
-            cpu_usage = psutil.Process(p.pid).cpu_percent(interval=interval_time)
-            cpu_percent_list.append(cpu_usage)
-            print(f"cpu_usage:{cpu_usage}", end=" ")
-        print(f"time_usage:{time.time() - start_time}")
-        if time.time() - start_time > timeout:
-            p.terminate()
-            break
-        # time.sleep(interval_time)
+        while p.poll() is None:
+            if mem:
+                # 每秒获取内存量
+                mem_usage = psutil.Process(p.pid).memory_info().rss
+                memory_info_list.append(mem_usage)
+                print(f"mem_usage:{mem_usage}", end=" ")
+            if cpu:
+                # 每秒获取cpu
+                cpu_usage = psutil.Process(p.pid).cpu_percent(interval=interval_time)
+                cpu_percent_list.append(cpu_usage)
+                print(f"cpu_usage:{cpu_usage}", end=" ")
+            print(f"time_usage:{time.time() - start_time}")
+            if time.time() - start_time > timeout:
+                p.terminate()
+                break
+            # time.sleep(interval_time)
 
-    stdout, stderr = p.communicate()
-    execution_time = time.time() - start_time
+        stdout, stderr = p.communicate()
+        execution_time = time.time() - start_time
 
-    return CommandResult(
-        p.returncode,
-        stdout.decode(encoding='gbk', errors='ignore').strip(),
-        stderr.decode(encoding='gbk', errors='ignore').strip(),
-        sum(memory_info_list) / 1024 / 1024 / len(memory_info_list),  # 内存单位为MB
-        sum(cpu_percent_list) / len(cpu_percent_list),  # cpu使用情况
-        execution_time
-    )
+        return CommandResult(
+            p.returncode,
+            stdout.decode(encoding='gbk', errors='ignore').strip(),
+            stderr.decode(encoding='gbk', errors='ignore').strip(),
+            sum(memory_info_list) / 1024 / 1024 / len(memory_info_list),  # 内存单位为MB
+            sum(cpu_percent_list) / len(cpu_percent_list),  # cpu使用情况
+            execution_time
+        )
+    except Exception as e:
+        print("Error:", e)
 
 
 if __name__ == "__main__":

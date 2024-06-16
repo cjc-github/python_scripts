@@ -7,7 +7,7 @@ import psutil
 import subprocess
 
 r"""
-1、命令执行的信息保存到文件中
+1、命令执行的信息保存到文件中，超时时需要将超时信息保存到文件中
 2、记录命令执行时的cpu和内存量（进程以及子进程）
 3、记录命令执行的时间（如果是超时的话，就是超时的时间）
 4、超时时，需要kill掉进程树（进程以及子进程）
@@ -18,8 +18,6 @@ r"""
 p=run_cmd(args, Mem=False, CPU=False, Timeout=5, interval_time=1,)
 这个函数可以通过p.mem,p.cpu,p.time来获取具体的信息
 """
-
-
 
 
 # 将log信息添加到文件中
