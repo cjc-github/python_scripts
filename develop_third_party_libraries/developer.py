@@ -1,4 +1,5 @@
 import xfuzz
+# 可以直接放在site-package，但是不能有xfuzz目录等。
 
 if __name__ == "__main__":
     result = xfuzz.add(5, 3)

@@ -8,6 +8,7 @@ class StringClass():
     def __init__(self, num):
         self.number = num
 
+    # 字符串写入文件
     def save_file(self):
         start_time = time.time()
         with open("file_string.txt", "w") as f:
@@ -16,6 +17,7 @@ class StringClass():
         end_time = time.time() - start_time
         print(end_time)
 
+    # 内存字符串写入文件
     def save_file_with_memory_io(self):
         start_time = time.time()
         s = StringIO()
@@ -30,6 +32,7 @@ class BytesClass():
     def __init__(self, num):
         self.number = num
 
+    # 二进制数据写入到文件
     def save_file(self):
         start_time = time.time()
         with open("file_bytes.txt", "wb") as f:
@@ -38,6 +41,7 @@ class BytesClass():
         end_time = time.time() - start_time
         print(end_time)
 
+    # 二进制内存数据写入文件
     def save_file_with_memory_io(self):
         start_time = time.time()
         s = BytesIO()
@@ -49,10 +53,12 @@ class BytesClass():
 
 if __name__ == "__main__":
     num = 1000
+    # 字符串在内存和文件io的性能对比
     stringio = StringClass(num)
     stringio.save_file_with_memory_io()
     stringio.save_file()
 
+    # 二进制数据在内存和文件io的性能对比
     bytesio = BytesClass(num)
     bytesio.save_file_with_memory_io()
     bytesio.save_file()
