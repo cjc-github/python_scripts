@@ -52,13 +52,13 @@ class BytesClass():
 
 
 if __name__ == "__main__":
-    num = 1000
+    num = 100
     # 字符串在内存和文件io的性能对比
     stringio = StringClass(num)
     stringio.save_file_with_memory_io()
-    stringio.save_file()
+    # stringio.save_file()
 
     # 二进制数据在内存和文件io的性能对比
     bytesio = BytesClass(num)
     bytesio.save_file_with_memory_io()
-    bytesio.save_file()
+    # bytesio.save_file()
