@@ -5,6 +5,7 @@ python版本：
 python 3.8.10
 
 pip install psutil==5.9.8
+pip install pyinstaller
 
 ```python
 # 安装时间相关的库

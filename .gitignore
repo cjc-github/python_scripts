@@ -1,0 +1,13 @@
+# pycharm
+.idea/
+
+
+.pyc
+*.spec
+
+utils/clear_typora_photo/dist/
+utils/clear_typora_photo/build/
+
+
+utils/find_files_with_keyword/dist/
+utils/find_files_with_keyword/build/
