@@ -2,6 +2,7 @@
 import subprocess
 import argparse
 
+
 # 可以执行的command命令
 command_convet_script = {
     'clear': 'utils/clear_typora_photo/clear_photo.py',
@@ -38,6 +39,7 @@ def parse_argument():
     return args
 
 
+# main函数
 if __name__ == "__main__":
     args = parse_argument()
     if args.command in command_convet_script:

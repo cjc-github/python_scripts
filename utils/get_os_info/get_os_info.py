@@ -3,6 +3,24 @@ import psutil
 import platform
 import argparse
 import subprocess
+import unicodedata
+
+
+key_width = 15
+value_width = 40
+ident = 2 * " "
+
+
+# 格式化字典
+def format_unicode_str(dic):
+    # 计算最大键的长度
+    def adjusted_length(str):
+        return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in str)
+    
+    max_key_length = max(adjusted_length(key) for key in dic.keys())
+    
+    for key, value in dic.items():
+        print(ident, key, " " * (max_key_length - adjusted_length(key)), " : ", value)
 
 
 # 判断当前操作系统
@@ -27,20 +45,17 @@ def get_os_info():
         "系统版本号": platform.release(),
         "平台信息": platform.platform(),
         "计算机名称": platform.node(),
-        "Python 版本": platform.python_version(),
+        "Python版本": platform.python_version(),
     }
 
     print("操作系统信息:")
-    for key, value in os_info.items():
-        print(f"{key}: {value}")
-            
-    # 获取所有环境变量
-    # print("环境变量:")
-    # for key, value in os.environ.items():
-    #     print(f"{key}: {value}")
+    format_unicode_str(os_info)
+
+    print("环境变量:")
+    format_unicode_str(os.environ)
 
 
-
+# 获取系统信息
 def get_system_info():
     """获取 CPU、内存和磁盘信息并打印。"""
 
@@ -227,8 +242,9 @@ def parse_argument():
 
 # main()函数
 def main():
-    args = parse_argument()
-    print(args)
+    # args = parse_argument()
+    # print(args)
+    get_os_info()
     
     
 
