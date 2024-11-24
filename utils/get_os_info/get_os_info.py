@@ -1,7 +1,22 @@
 import os
 import psutil
 import platform
+import argparse
 import subprocess
+
+
+# 判断当前操作系统
+def get_os_identifier():
+    os_name = platform.system()
+    
+    if os_name == "Windows":
+        return 0
+    elif os_name == "Linux":
+        return 1
+    elif os_name == "Darwin":
+        return 2
+    else:
+        return -1
 
 
 # 获取操作信息信息
@@ -23,6 +38,7 @@ def get_os_info():
     # print("环境变量:")
     # for key, value in os.environ.items():
     #     print(f"{key}: {value}")
+
 
 
 def get_system_info():
@@ -196,17 +212,114 @@ def get_memory_info():
         print("[*] 不支持的操作系统，无法获取内存信息。")
 
 
+# 创建命令行解析器
+def parse_argument():
+    parser = argparse.ArgumentParser(description='处理数据的程序')
+    
+    # 添加命令行参数
+    parser.add_argument('-d', '--detailed', action='store_true', help='开启详细模式')
+    parser.add_argument('-s', '--save', action='store_true', help='保存到文件')
+
+    # 解析参数
+    args = parser.parse_args()
+    return args
+
+
+# main()函数
+def main():
+    args = parse_argument()
+    print(args)
+    
+    
+
+
+r"""
+简短的电脑环境
+设备名称：
+操作信息：
+处理器:
+主板：
+内存：型号+内存大小
+显卡：
+显示器：
+磁盘:型号+磁盘大小
+
+声卡:
+
+网卡:
+
+"""
+
+r"""
+
+完整的电脑环境:
+简短的电脑环境
+设备名称：
+操作信息：
+处理器:型号+使用占比
+主板：
+内存:型号+内存大小+使用占比
+显卡：
+显示器：
+
+磁盘:型号+磁盘大小+使用占比
+
+声卡:
+
+网卡:
+
+环境变量：
+"""
+
+# 还需要封装输出
 
 if __name__ == "__main__":
-    # get_os_info()
-    # # 获取cpu信息
-    # get_cpu_info()
-    # # 获取gpu信息
-    # get_gpu_info()
-    # get_system_info()
-    # # 获取磁盘信息
-    # get_disk_info()
-    # 获取主板信息
-    # get_motherboard_info()
-    # 获取内存信息
-    get_memory_info()
+    main()
+    
+    # # get_os_info()
+    # # # 获取cpu信息
+    # # get_cpu_info()
+    # # # 获取gpu信息
+    # # get_gpu_info()
+    # # get_system_info()
+    # # # 获取磁盘信息
+    # # get_disk_info()
+    # # 获取主板信息
+    # # get_motherboard_info()
+    # # 获取内存信息
+    # get_memory_info()
+    
+    
+    
+r"""
+# 保存时间：
+
+计算机
+    操作系统：
+    操作系统版本：
+    计算机名称：
+
+处理器
+
+主板
+    主板名称
+
+内存
+
+
+显卡
+
+
+磁盘
+
+
+显示屏
+
+
+声卡
+
+
+网卡：
+
+
+"""
