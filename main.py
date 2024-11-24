@@ -1,16 +1,46 @@
+# main.py
 import subprocess
+import argparse
+
+# 可以执行的command命令
+command_convet_script = {
+    'clear': 'utils/clear_typora_photo/clear_photo.py',
+    'find': 'utils/find_files_with_keyword/find_files_with_keyword.py',
+    'get_system': 'utils/get_os_info/get_os_info.py',
+}
+
+command_list = list(command_convet_script.keys())
 
 
-if __name__ =="__main__":
-    # 使用字符串作为标准输入
-    p = subprocess.Popen(['python', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    p.stdin.write('print("Hello, World!")\n')
-    p.stdin.flush()
-    output, error = p.communicate()
-    print(output)
+# 运行python脚本
+def run_script(script_name, args):
+    try:
+        cmd = ["python", script_name] + list(args)
+        print("cmd", cmd)
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"[*] Error occurred while running {script_name}: {e}")
 
-    # 使用文件作为标准输入
-    with open('input.txt', 'r') as f:
-        p = subprocess.Popen(['wc', '-l'], stdin=f, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = p.communicate()
-        print(output.decode().strip())
+
+# 解析命令行参数
+def parse_argument():
+    parser = argparse.ArgumentParser(description="Run different scripts.")
+    parser.add_argument('command', type=str, choices=command_list, nargs="?", help='Python files to run python scirpt')
+    parser.add_argument('args', type=str, nargs=argparse.REMAINDER, help='Arguments for the python script')
+
+    args = parser.parse_args()
+    if not args.command:
+        # raise ValueError("command不存在")
+        print("[+] No command provided. Here is the help information:")
+        parser.print_help()
+        exit(1)
+        
+    return args
+
+
+if __name__ == "__main__":
+    args = parse_argument()
+    if args.command in command_convet_script:
+        run_script(command_convet_script[args.command], args.args)
+    else:
+        print("[!] Unknown command. Use '-h' to choice comamnd option")

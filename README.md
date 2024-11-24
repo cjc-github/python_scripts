@@ -1,5 +1,6 @@
 # pyscripts
- some python scripts
+
+some python scripts
 
 
 ## 依赖:
@@ -24,3 +25,13 @@ pip insall -U arrow
 ```
 
 
+## main执行
+
+具体执行命令：
+
+```shell
+python main.py -h
+python main.py find -h
+python main.py find -f .py -k main ./utils/clear_typora_photo/
+
+```
