@@ -6,7 +6,7 @@ develop_third_party_libraries: 开发第三方库
 
 execute_dynamic_method: python动态加载函数
 
-file: 频繁读写单个文件，确保文件内容的完整性和可靠性
+file_access: 频繁写单个文件，确保读文件内容的完整性和可靠性
 
 find_files_with_keyword: 根据关键字寻找文件
 
