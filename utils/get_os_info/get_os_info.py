@@ -6,8 +6,11 @@ import subprocess
 import unicodedata
 
 
+# key的长度
 key_width = 15
+# value的长度
 value_width = 40
+# 缩进
 ident = 2 * " "
 
 
@@ -40,17 +43,17 @@ def get_os_identifier():
 # 获取操作信息信息
 def get_os_info():
     os_info = {
-        "系统名称": platform.system(),
-        "系统版本": platform.version(),
-        "系统版本号": platform.release(),
-        "平台信息": platform.platform(),
         "计算机名称": platform.node(),
+        "操作系统信息": platform.platform(),
         "Python版本": platform.python_version(),
     }
 
     print("操作系统信息:")
     format_unicode_str(os_info)
 
+
+# 获取环境变量
+def get_environ_info():
     print("环境变量:")
     format_unicode_str(os.environ)
 
@@ -242,100 +245,26 @@ def parse_argument():
 
 # main()函数
 def main():
-    # args = parse_argument()
-    # print(args)
+    args = parse_argument()
+    print(args)
     get_os_info()
     
+    # 获取cpu信息
+    get_cpu_info()
+    # # 获取gpu信息
+    # get_gpu_info()
+    # get_system_info()
+    # # 获取磁盘信息
+    # get_disk_info()
+    # # 获取主板信息
+    # get_motherboard_info()
+    # # 获取内存信息
+    # get_memory_info()
+
     
 
-
-r"""
-简短的电脑环境
-设备名称：
-操作信息：
-处理器:
-主板：
-内存：型号+内存大小
-显卡：
-显示器：
-磁盘:型号+磁盘大小
-
-声卡:
-
-网卡:
-
-"""
-
-r"""
-
-完整的电脑环境:
-简短的电脑环境
-设备名称：
-操作信息：
-处理器:型号+使用占比
-主板：
-内存:型号+内存大小+使用占比
-显卡：
-显示器：
-
-磁盘:型号+磁盘大小+使用占比
-
-声卡:
-
-网卡:
-
-环境变量：
-"""
 
 # 还需要封装输出
 
 if __name__ == "__main__":
     main()
-    
-    # # get_os_info()
-    # # # 获取cpu信息
-    # # get_cpu_info()
-    # # # 获取gpu信息
-    # # get_gpu_info()
-    # # get_system_info()
-    # # # 获取磁盘信息
-    # # get_disk_info()
-    # # 获取主板信息
-    # # get_motherboard_info()
-    # # 获取内存信息
-    # get_memory_info()
-    
-    
-    
-r"""
-# 保存时间：
-
-计算机
-    操作系统：
-    操作系统版本：
-    计算机名称：
-
-处理器
-
-主板
-    主板名称
-
-内存
-
-
-显卡
-
-
-磁盘
-
-
-显示屏
-
-
-声卡
-
-
-网卡：
-
-
-"""
