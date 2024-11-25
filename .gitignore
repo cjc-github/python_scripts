@@ -1,13 +1,19 @@
 # pycharm
 .idea/
 
-
+# python
 .pyc
 *.spec
 
+# pyinstaller
 utils/clear_typora_photo/dist/
 utils/clear_typora_photo/build/
 
-
+# pyinstaller
 utils/find_files_with_keyword/dist/
 utils/find_files_with_keyword/build/
+
+# file_access
+utils/file_access/tmp.txt
+utils/file_access/example.txt
+

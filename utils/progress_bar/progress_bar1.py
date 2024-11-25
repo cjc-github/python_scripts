@@ -1,5 +1,10 @@
 import time
 
+
+r"""
+进度条的关键在于使用\r将上一次的输出重置掉
+"""
+
 if __name__ == "__main__":
     scale = 50
 
