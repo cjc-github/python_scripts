@@ -4,13 +4,13 @@ import argparse
 
 
 # 可以执行的command命令
-command_convet_script = {
+command_convert_script = {
     'clear': 'utils/clear_typora_photo/clear_photo.py',
     'find': 'utils/find_files_with_keyword/find_files_with_keyword.py',
     'get_system': 'utils/get_os_info/get_os_info.py',
 }
 
-command_list = list(command_convet_script.keys())
+command_list = list(command_convert_script.keys())
 
 
 # 运行python脚本
@@ -42,7 +42,7 @@ def parse_argument():
 # main函数
 if __name__ == "__main__":
     args = parse_argument()
-    if args.command in command_convet_script:
-        run_script(command_convet_script[args.command], args.args)
+    if args.command in command_convert_script:
+        run_script(command_convert_script[args.command], args.args)
     else:
         print("[!] Unknown command. Use '-h' to choice comamnd option")
