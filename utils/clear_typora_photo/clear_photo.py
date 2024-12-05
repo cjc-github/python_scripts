@@ -1,7 +1,24 @@
 import os
 import re
+import logging
 import argparse
+
 from pathlib import Path
+from logger_module import Logger
+
+
+# Define a global logger variable
+logger = None
+
+r"""
+checkout whether save the report log
+"""
+def check_save_log(save_log):
+    global logger
+    logger = Logger(save_log=save_log, log_level=logging.INFO)
+
+
+
 
 r"""
 清理 Typora 中多余的图片
@@ -40,14 +57,18 @@ def parser_argument():
 
     parser = argparse.ArgumentParser(description="处理文件地址参数")
     parser.add_argument('path', nargs='?', default=os.getcwd(), help='文件地址 (默认当前工作目录)')
+    # add the save log
+    parser.add_argument('-s', '--save-log', type=str, choices=['true', 'false'], default='true', help='保存执行日志 (默认: true)')
     args = parser.parse_args()
+
+    print("[+] args:", args)
 
     print("[+] 输入地址:", args.path)
     if not os.path.exists(args.path):
         raise FileNotFoundError(f"[*] 指定的路径不存在: {args.path}")
     args.path = os.path.abspath(args.path)
     print("[+] 转换为绝对路径：", args.path)
-    return args.path
+    return args
 
 
 def extract_image_paths(md_file):
@@ -92,20 +113,20 @@ def validate_typora_rule(image_list_in_file, image_list_in_dir):
     # 检查 .assets 中存在但 .md 中不存在的图片
     missing_in_md = asset_image_set - md_image_set
     for missing in missing_in_md:
-        print(f"[!] Assets 中存在但 MD 中没有的文件: {missing}")
+        logger.error(f"[!] Assets 中存在但 MD 中没有的文件: {missing}")
         os.remove(missing)
-        print("[+] 删除: ", missing)
+        logger.info("[+] 删除: ", missing)
 
     # 检查 .md 中存在但 .assets 中不存在的图片
     missing_in_assets = md_image_set - asset_image_set
     if missing_in_assets:
         for missing in missing_in_assets:
-            print(f"[*] MD 中存在但 Assets 中没有的文件: {missing}")
-        print("[!] typora 规则出错")
+            logger.warning(f"[*] MD 中存在但 Assets 中没有的文件: {missing}")
+        logger.error("[!] typora 规则出错")
 
     # 检查是否一致
     if not missing_in_md and not missing_in_assets and len(md_image_set) > 0:
-        print("[+] Finish: MD 和 Assets 中的图片路径一致")
+        logger.info("[+] Finish: MD 和 Assets 中的图片路径一致")
 
 
 # 获取md文件中的图片列表和assets中的图片列表
@@ -140,7 +161,7 @@ def get_target_info(dir_path):
         # 找到 .md 文件
         if file_list.endswith('.md'):
             num += 1
-            print(f"[+] num: {num} md文件: {file_list}")
+            logger.info(f"[+] num: {num} md文件: {file_list}")
             image_list_in_file, image_list_in_dir = obtain_tuple(file_list)
             # 验证 Typora 规则
             validate_typora_rule(image_list_in_file, image_list_in_dir)
@@ -148,9 +169,12 @@ def get_target_info(dir_path):
 
 def main():
     # 解析命令行参数
-    dir_path = parser_argument()
+    args = parser_argument()
+    # save the log
+    check_save_log(args.save_log)
+
     # 获取目标信息
-    get_target_info(dir_path)
+    get_target_info(args.path)
 
 
 if __name__ == "__main__":
@@ -160,4 +184,4 @@ if __name__ == "__main__":
     # linux
     # pyinstaller -F clear_photo.py
     main()
-    print("done.")
+    logger.info("done.")

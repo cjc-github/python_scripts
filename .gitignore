@@ -2,7 +2,7 @@
 .idea/
 
 # python
-.pyc
+*.pyc
 *.spec
 
 # pyinstaller
@@ -17,3 +17,4 @@ utils/find_files_with_keyword/build/
 utils/file_access/tmp.txt
 utils/file_access/example.txt
 
+logfile_*
