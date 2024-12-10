@@ -53,4 +53,8 @@ class Logger:
 
     def get_log_file(self):
         """Return the name of the log file if logging to file."""
-        return self.log_file if self.save_log else None
+        if self.save_log:
+            return self.log_file
+        else:
+            return None
+        # return self.log_file if self.save_log else None
