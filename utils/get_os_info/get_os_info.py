@@ -1,4 +1,5 @@
 import os
+import distro
 import psutil
 import platform
 import argparse
@@ -12,6 +13,10 @@ key_width = 15
 value_width = 40
 # 缩进
 ident = 2 * " "
+# 结果
+report_dict = {}
+
+title = "title"
 
 
 # 格式化字典
@@ -23,7 +28,10 @@ def format_unicode_str(dic):
     max_key_length = max(adjusted_length(key) for key in dic.keys())
     
     for key, value in dic.items():
-        print(ident, key, " " * (max_key_length - adjusted_length(key)), " : ", value)
+        if value == title:
+            print("\n" + key)
+        else:
+            print(ident, key, " " * (max_key_length - adjusted_length(key)), " : ", value)
 
 
 # 判断当前操作系统
@@ -43,13 +51,17 @@ def get_os_identifier():
 # 获取操作信息信息
 def get_os_info():
     os_info = {
+        "操作系统:": title,
+        "操作系统": platform.system(),
+        "发行版本": f"{distro.name()} {distro.version()}",
         "计算机名称": platform.node(),
-        "操作系统信息": platform.platform(),
-        "Python版本": platform.python_version(),
+        "操作系统内核": platform.platform(),
+        # "Python版本": platform.python_version(),
     }
-
-    print("操作系统信息:")
-    format_unicode_str(os_info)
+    
+    # 加入
+    report_dict.update(os_info)
+    
 
 
 # 获取环境变量
@@ -60,83 +72,65 @@ def get_environ_info():
 
 # 获取系统信息
 def get_system_info():
-    """获取 CPU、内存和磁盘信息并打印。"""
-
-    # 获取 CPU 信息
-    cpu_count = psutil.cpu_count(logical=True)  # 逻辑 CPU 核心数
-    cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
-
+    system_dict = {}
+    
+    """获取内存并打印。"""
     # 获取内存信息
     memory_info = psutil.virtual_memory()  # 物理内存信息
     total_memory = memory_info.total  # 总内存
     used_memory = memory_info.used  # 已用内存
     memory_percentage = memory_info.percent  # 内存使用百分比
 
-    # # 获取磁盘信息
-    # disk_usage = psutil.disk_usage('/')  # 磁盘使用情况
-    # total_disk = disk_usage.total  # 总磁盘空间
-    # used_disk = disk_usage.used  # 已用磁盘空间
-    # disk_percentage = disk_usage.percent  # 磁盘使用百分比
+    system_dict["运行内存"] = f"{used_memory / (1024 ** 3):.2f} / {total_memory / (1024 ** 3):.2f} GB"
+    system_dict["内存使用率"] = f"{memory_percentage}%"
+    
+    # 加入
+    report_dict.update(system_dict)
 
-    # 打印信息
-    print("系统信息:")
-    print(f"逻辑 CPU 核心数: {cpu_count}")
-    print(f"CPU 使用率: {cpu_usage}%")
-    # print(f"总内存: {total_memory / (1024 ** 3):.2f} GB")
-    # print(f"已用内存: {used_memory / (1024 ** 3):.2f} GB")
-    # print(f"内存使用率: {memory_percentage}%")
-    
-    # print(f"总磁盘空间: {total_disk / (1024 ** 3):.2f} GB")
-    # print(f"已用磁盘空间: {used_disk / (1024 ** 3):.2f} GB")
-    # print(f"磁盘使用率: {disk_percentage}%")
-    
-    output = (
-        f"运行内存: {used_memory / (1024 ** 3):.2f} / {total_memory / (1024 ** 3):.2f} GB "
-        f"内存使用率: {memory_percentage}%"
-    )
-    print(output)
-    
+
     
 # 获取磁盘信息
 def get_disk_info():
     """打印当前主机上所有磁盘的信息。"""
     partitions = psutil.disk_partitions()
     
+    # 用户跟踪已打印的设备, 去掉同一设备, 但挂载点不一样的设备
+    seen_devices = set() 
+    
     print("磁盘分区信息:")
     for partition in partitions:
         try:
-            if partition.opts != "cdrom":
-                # 获取磁盘使用情况
-                usage = psutil.disk_usage(partition.mountpoint)
-                output = (
-                    f"设备: {partition.device} "
-                    f"{usage.used / (1024 ** 3):.2f} / {usage.total / (1024 ** 3):.2f} GB "
-                    f"使用率: {usage.percent}%"
-                )
-                print(output)
+            # 过滤掉 loop 设备, 在 linux 中常见
+            if 'loop' in partition.device:
+                continue
+    
+            # cdrom 一般在 windows 中常见
+            if partition.opts == "cdrom":
+                continue
             
-            # print(f"设备: {partition.device}")
-            # print(f"挂载点: {partition.mountpoint}")
-            # print(f"文件系统类型: {partition.fstype}")
-            # print(f"选项: {partition.opts}")
-            # if partition.opts != "cdrom":
-            #     # 获取磁盘使用情况
-            #     usage = psutil.disk_usage(partition.mountpoint)
-            #     print(f"  总空间: {usage.total / (1024 ** 3):.2f} GB")
-            #     print(f"  已用空间: {usage.used / (1024 ** 3):.2f} GB")
-            #     print(f"  可用空间: {usage.free / (1024 ** 3):.2f} GB")
-            #     print(f"  使用率: {usage.percent}%\n")
+            # 检查是否已经打印过该设备
+            if partition.device in seen_devices:
+                continue
+            
+            # 获取磁盘使用情况
+            usage = psutil.disk_usage(partition.mountpoint)
+            output = (
+                f"设备: {partition.device} "
+                f"{usage.used / (1024 ** 3):.2f} / {usage.total / (1024 ** 3):.2f} GB "
+                f"使用率: {usage.percent}%"
+            )
+            seen_devices.add(partition.device)
+            print(output)
         except Exception as e:
             print("[*] 分析失败", e)
         
 
 # 获取cpu信息
 def get_cpu_info():
-    cpu_arch = platform.architecture()
-    print(f"处理器架构: {platform.architecture()}")
-    cpu_info = platform.processor()  # 获取 CPU 处理器信息
-    print(f"CPU 型号: {cpu_info}")
-    
+    cpu_dict = {}
+    # cpu_dict["处理器架构"] = platform.architecture()
+    cpu_dict["CPU 架构"] = platform.processor()
+
     # 使用 subprocess 获取更详细的 CPU 信息
     try:
         if platform.system() == "Windows":
@@ -154,13 +148,40 @@ def get_cpu_info():
         else:
             cpu_model = "不支持的操作系统"
         
-        print(f"CPU 型号 (subprocess): {cpu_model}")
+        cpu_dict["CPU 型号"] = cpu_model
+
     except Exception as e:
         print(f"获取 CPU 信息失败: {e}")
         
+    # 获取 CPU 信息
+    cpu_count = psutil.cpu_count(logical=True)  # 逻辑 CPU 核心数
+    cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
+    
+    cpu_freq = psutil.cpu_freq(percpu=True)
+
+    # 打印每个核心的频率
+    for index, freq in enumerate(cpu_freq):
+        print(f"核心 {index}: 当前频率: {freq.current} MHz, 最大频率: {freq.max} MHz, 最小频率: {freq.min} MHz")
+        
+        cpu_dict["逻辑 CPU 核心数"] = cpu_count
+        cpu_dict["CPU 使用率"] = cpu_usage
+        
+    # 获取 CPU 的逻辑核心数量（线程数量）
+    logical_cpu_count = psutil.cpu_count(logical=True)
+
+    # 获取 CPU 的物理核心数量
+    physical_cpu_count = psutil.cpu_count(logical=False)
+
+    print(f"逻辑核心数量（线程数量）: {logical_cpu_count}")
+    print(f"物理核心数量: {physical_cpu_count}")
+
+    
+    # 加入cpu信息
+    report_dict.update(cpu_dict)
         
 # 获取gpu信息
 def get_gpu_info():
+    gpu_info = {}
     try:
         if platform.system() == "Windows":
             # Windows
@@ -177,9 +198,12 @@ def get_gpu_info():
         else:
             gpu_model = "不支持的操作系统"
         
-        print(f"GPU 型号: {gpu_model}")
+        gpu_info["GPU 型号"] = gpu_model
     except Exception as e:
         print(f"获取 GPU 信息失败: {e}")
+    
+    # 加入gpu信息
+    report_dict.update(gpu_info)
         
 
 # 获取主板信息
@@ -247,24 +271,29 @@ def parse_argument():
 def main():
     args = parse_argument()
     print(args)
+    # 获取操作系统信息
     get_os_info()
     
     # 获取cpu信息
     get_cpu_info()
-    # # 获取gpu信息
-    # get_gpu_info()
-    # get_system_info()
-    # # 获取磁盘信息
-    # get_disk_info()
-    # # 获取主板信息
-    # get_motherboard_info()
-    # # 获取内存信息
-    # get_memory_info()
-
     
+    # 获取gpu信息
+    get_gpu_info()
+    
+    get_system_info()
+    
+    # 获取磁盘信息
+    get_disk_info()
+    
+    # 获取主板信息
+    get_motherboard_info()
+    
+    # 获取内存信息
+    # get_memory_info()
+    
+    format_unicode_str(report_dict)
 
 
 # 还需要封装输出
-
 if __name__ == "__main__":
     main()
