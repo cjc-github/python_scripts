@@ -3,6 +3,34 @@ import logging
 from datetime import datetime
 
 
+# 一个空的Looger
+class EmptyLogger:
+    def __init__(self):
+        pass
+    
+    # info函数
+    def info(self, message):
+        print("[+]", message)
+        
+    # warning函数
+    def warning(self, message):
+        """Log a warning message."""
+        print(f"[*] {message}")
+
+    # error函数
+    def error(self, message):
+        print(f"[!] {message}")
+
+    # debug函数
+    def debug(self, message):
+        print(f"[-] {message}")
+
+    # critical函数
+    def critical(self, message):
+        print(f"[x] {message}")
+
+
+
 # 设置logging函数，适用于开发人员内部测试
 # 如果不保存文件和不显示终端都启动的话，也会在终端上出现，但是没有具体的样式
 def setup_logging(save_log=True, save_terminal=True, log_prefix="logfile", log_level=logging.INFO, custom_format=None): 
@@ -51,33 +79,6 @@ def setup_logging(save_log=True, save_terminal=True, log_prefix="logfile", log_l
         logger.info("Logger initialized.")
         
     return logger
-
-
-# 一个空的Looger
-class EmptyLogger:
-    def __init__(self):
-        pass
-    
-    # info函数
-    def info(self, message):
-        print("[+]", message)
-        
-    # warning函数
-    def warning(self, message):
-        """Log a warning message."""
-        print(f"[*] {message}")
-
-    # error函数
-    def error(self, message):
-        print(f"[!] {message}")
-
-    # debug函数
-    def debug(self, message):
-        print(f"[-] {message}")
-
-    # critical函数
-    def critical(self, message):
-        print(f"[x] {message}")
 
 
 
