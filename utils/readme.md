@@ -21,3 +21,5 @@ replace_punctuation: 替换文件中的中文符号
 run_command: 运行命令行
 
 window_hide: windows隐藏工具
+
+logging_module: 日志模块

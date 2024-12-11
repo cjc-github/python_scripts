@@ -26,4 +26,8 @@
 
 
 
-**总结：**字符串内存io（StringIO） > 二进制数据内存io（BytesIO）> 文件io（二进制数据）> 文件io（字符串）。在遇见大规模的文件时，考虑使用内存io（StringIO或BytesIO）或者二进制的文件io。
+**总结：**
+
+字符串内存io（StringIO） > 二进制数据内存io（BytesIO）> 文件io（二进制数据）> 文件io（字符串）。
+
+在遇见大规模的文件时，考虑使用内存io（StringIO或BytesIO）或者二进制的文件io。
