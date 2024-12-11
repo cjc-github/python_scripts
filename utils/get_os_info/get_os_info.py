@@ -128,6 +128,7 @@ def get_disk_info():
 # 获取cpu信息
 def get_cpu_info():
     cpu_dict = {}
+    cpu_dict["CPU 信息"] = title
     # cpu_dict["处理器架构"] = platform.architecture()
     cpu_dict["CPU 架构"] = platform.processor()
 
@@ -153,8 +154,13 @@ def get_cpu_info():
     except Exception as e:
         print(f"获取 CPU 信息失败: {e}")
         
-    # 获取 CPU 信息
-    cpu_count = psutil.cpu_count(logical=True)  # 逻辑 CPU 核心数
+    # 获取 CPU 的逻辑核心数量（线程数量）
+    logical_cpu_count = psutil.cpu_count(logical=True)
+    # 获取 CPU 的物理核心数量
+    physical_cpu_count = psutil.cpu_count(logical=False)
+    cpu_core = f"{physical_cpu_count}核 {logical_cpu_count}线程"
+    cpu_dict["CPU核心数"] = cpu_core    
+    
     cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
     
     cpu_freq = psutil.cpu_freq(percpu=True)
@@ -163,18 +169,8 @@ def get_cpu_info():
     for index, freq in enumerate(cpu_freq):
         print(f"核心 {index}: 当前频率: {freq.current} MHz, 最大频率: {freq.max} MHz, 最小频率: {freq.min} MHz")
         
-        cpu_dict["逻辑 CPU 核心数"] = cpu_count
         cpu_dict["CPU 使用率"] = cpu_usage
         
-    # 获取 CPU 的逻辑核心数量（线程数量）
-    logical_cpu_count = psutil.cpu_count(logical=True)
-
-    # 获取 CPU 的物理核心数量
-    physical_cpu_count = psutil.cpu_count(logical=False)
-
-    print(f"逻辑核心数量（线程数量）: {logical_cpu_count}")
-    print(f"物理核心数量: {physical_cpu_count}")
-
     
     # 加入cpu信息
     report_dict.update(cpu_dict)
