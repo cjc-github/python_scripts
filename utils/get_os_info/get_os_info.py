@@ -123,7 +123,34 @@ def get_disk_info():
             print(output)
         except Exception as e:
             print("[*] 分析失败", e)
+
+def get_cpu_hz():
+    core_counts = {}
+    cpu_core_hz = ""
+    
+    if get_os_identifier() == 0:
+        cpu_info = wmi.WMI().Win32_Processor()
+
+        for cpu in cpu_info:
+            for i in range(cpu.NumberOfLogicalProcessors):
+                current_freq = cpu.CurrentClockSpeed
+                core_counts[current_freq] = core_counts.get(current_freq, 0) + 1
+    elif get_os_identifier() ==1:
+        cpu_freq = psutil.cpu_freq(percpu=True)
+
+        for freq in cpu_freq:
+            current_freq = freq.current
+            core_counts[current_freq] = core_counts.get(current_freq, 0) + 1
+
+    sorted_core_counts = dict(sorted(core_counts.items(), key=lambda x: x[0], reverse=True))
+
+    for freq, count in sorted_core_counts.items():
+        cpu_core_hz += 
+        print(f"赫兹: {freq} MHz, 核心数量: {count}")
+    
+    return core_counts
         
+    
 
 # 获取cpu信息
 def get_cpu_info():
