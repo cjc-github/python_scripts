@@ -22,7 +22,7 @@ def way1():
     logging.critical("critical")
     
     
-def way2():
+def way2(): # 推荐
     # 级别: critical > error > warning > info > debug
     
     """
