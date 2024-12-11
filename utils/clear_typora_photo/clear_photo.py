@@ -50,7 +50,7 @@ def parser_argument():
     parser = argparse.ArgumentParser(description="处理文件地址参数")
     parser.add_argument('path', nargs='?', default=os.getcwd(), help='文件地址 (默认当前工作目录)')
     # add the save log
-    parser.add_argument('-s', '--save-log', type=str, choices=['true', 'false'], default='false', help='保存执行日志 (默认: true)')
+    parser.add_argument('-s', '--save-log', action='store_true', help='保存执行日志 (默认: false)')
     args = parser.parse_args()
     
     # 增加日志模块
