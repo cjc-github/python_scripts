@@ -1,4 +1,5 @@
 import os
+# import wmi
 import distro
 import psutil
 import platform
@@ -81,7 +82,16 @@ def get_memory_info():
     memory_percentage = memory_info.percent  # 内存使用百分比
 
     system_dict["运行内存"] = f"{used_memory / (1024 ** 3):.2f} / {total_memory / (1024 ** 3):.2f} GB"
-    system_dict["内存使用率"] = f"{memory_percentage}%"
+    system_dict["运行内存使用率"] = f"{memory_percentage}%"
+    
+    memory_info = psutil.swap_memory()  # 物理内存信息
+    total_memory = memory_info.total  # 总内存
+    used_memory = memory_info.used  # 已用内存
+    memory_percentage = memory_info.percent  # 内存使用百分比
+
+    system_dict["交换内存"] = f"{used_memory / (1024 ** 3):.2f} / {total_memory / (1024 ** 3):.2f} GB"
+    system_dict["交换内存使用率"] = f"{memory_percentage}%"
+    
     
     # 加入
     report_dict.update(system_dict)
@@ -130,14 +140,15 @@ def get_cpu_hz():
     core_counts = {}
     cpu_core_hz = ""
     
-    if get_os_identifier() == 0:
-        cpu_info = wmi.WMI().Win32_Processor()
+    if get_os_identifier() == 3:
+        c = wmi.WMI()
+        cpu_info = c.Win32_Processor()
 
         for cpu in cpu_info:
             for i in range(cpu.NumberOfLogicalProcessors):
                 current_freq = cpu.CurrentClockSpeed
                 core_counts[current_freq] = core_counts.get(current_freq, 0) + 1
-    elif get_os_identifier() ==1:
+    elif get_os_identifier() <= 2:
         cpu_freq = psutil.cpu_freq(percpu=True)
 
         for freq in cpu_freq:
@@ -191,7 +202,7 @@ def get_cpu_info():
     cpu_dict["CPU核心数"] = cpu_core    
     
     cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
-    cpu_dict["CPU 使用率"] = str(cpu_usage) + "%"
+    cpu_dict["CPU 使用率"] = f"{cpu_usage}%"
     cpu_dict["CPU 赫兹"] = get_cpu_hz()
     
     # 加入cpu信息
