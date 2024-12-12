@@ -6,7 +6,6 @@ import argparse
 import subprocess
 import unicodedata
 
-
 # key的长度
 key_width = 15
 # value的长度
@@ -71,7 +70,7 @@ def get_environ_info():
 
 
 # 获取系统信息
-def get_system_info():
+def get_memory_info():
     system_dict = {}
     
     """获取内存并打印。"""
@@ -92,13 +91,13 @@ def get_system_info():
 # 获取磁盘信息
 def get_disk_info():
     """打印当前主机上所有磁盘的信息。"""
+    disk_dict = {}
+    disk_dict["磁盘分区信息"] = title
     partitions = psutil.disk_partitions()
     
     # 用户跟踪已打印的设备, 去掉同一设备, 但挂载点不一样的设备
     seen_devices = set() 
-    
-    print("磁盘分区信息:")
-    for partition in partitions:
+    for index, partition in enumerate(partitions):
         try:
             # 过滤掉 loop 设备, 在 linux 中常见
             if 'loop' in partition.device:
@@ -119,11 +118,14 @@ def get_disk_info():
                 f"{usage.used / (1024 ** 3):.2f} / {usage.total / (1024 ** 3):.2f} GB "
                 f"使用率: {usage.percent}%"
             )
+            disk_dict["设备" + str(index)] = output
             seen_devices.add(partition.device)
-            print(output)
         except Exception as e:
             print("[*] 分析失败", e)
+    
+    report_dict.update(disk_dict)
 
+# 获取每个cpu的赫兹数
 def get_cpu_hz():
     core_counts = {}
     cpu_core_hz = ""
@@ -145,10 +147,10 @@ def get_cpu_hz():
     sorted_core_counts = dict(sorted(core_counts.items(), key=lambda x: x[0], reverse=True))
 
     for freq, count in sorted_core_counts.items():
-        cpu_core_hz += 
-        print(f"赫兹: {freq} MHz, 核心数量: {count}")
+        cpu_core_hz += f"{count} x {freq} MHZ"
+        # print(f"赫兹: {freq} MHz, 核心数量: {count}")
     
-    return core_counts
+    return cpu_core_hz
         
     
 
@@ -189,15 +191,8 @@ def get_cpu_info():
     cpu_dict["CPU核心数"] = cpu_core    
     
     cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
-    
-    cpu_freq = psutil.cpu_freq(percpu=True)
-
-    # 打印每个核心的频率
-    for index, freq in enumerate(cpu_freq):
-        print(f"核心 {index}: 当前频率: {freq.current} MHz, 最大频率: {freq.max} MHz, 最小频率: {freq.min} MHz")
-        
-        cpu_dict["CPU 使用率"] = cpu_usage
-        
+    cpu_dict["CPU 使用率"] = cpu_usage
+    cpu_dict["CPU 赫兹"] = get_cpu_hz()
     
     # 加入cpu信息
     report_dict.update(cpu_dict)
@@ -205,10 +200,11 @@ def get_cpu_info():
 # 获取gpu信息
 def get_gpu_info():
     gpu_info = {}
+    gpu_info["GPU 信息"] = title
     try:
         if platform.system() == "Windows":
             # Windows
-            command = "wmic path win32_VideoController get name"
+            command = "wmic path win32_VideoController get adapterram, name"
             gpu_model = subprocess.check_output(command, shell=True).decode().strip().split('\n')[1]
         elif platform.system() == "Linux":
             # Linux
@@ -227,35 +223,10 @@ def get_gpu_info():
     
     # 加入gpu信息
     report_dict.update(gpu_info)
-        
-
-# 获取主板信息
-def get_motherboard_info():
-    """获取主板信息，支持 Windows 和 Linux。"""
-    os_type = platform.system()
-
-    if os_type == "Windows":
-        try:
-            command = "wmic baseboard get product, manufacturer, version, serialnumber"
-            output = subprocess.check_output(command, shell=True).decode().strip().split('\n')[1:]
-            for line in output:
-                if line.strip():
-                    print(f"主板信息: {line.strip()}")
-        except Exception as e:
-            print(f"获取主板信息失败: {e}")
-    elif os_type == "Linux":
-        try:
-            command = "sudo dmidecode -t baseboard"
-            output = subprocess.check_output(command, shell=True).decode().strip().split('\n')
-            print(f"主板信息: {output}")
-        except Exception as e:
-            print(f"获取主板信息失败: {e}")
-    else:
-        print("[*]不支持的操作系统，无法获取主板信息。")
     
     
 # 获取内存信息
-def get_memory_info():
+def get_memory_info1():
     os_type = platform.system()
 
     if os_type == "Windows":
@@ -293,7 +264,8 @@ def parse_argument():
 # main()函数
 def main():
     args = parse_argument()
-    print(args)
+    # print(args)
+    
     # 获取操作系统信息
     get_os_info()
     
@@ -303,20 +275,19 @@ def main():
     # 获取gpu信息
     get_gpu_info()
     
-    get_system_info()
+    # 获取运行内存信息
+    get_memory_info()
     
     # 获取磁盘信息
     get_disk_info()
     
-    # 获取主板信息
-    get_motherboard_info()
-    
-    # 获取内存信息
-    # get_memory_info()
-    
+    # 格式化输出
     format_unicode_str(report_dict)
 
 
 # 还需要封装输出
 if __name__ == "__main__":
-    main()
+    # main()
+
+    print(get_gpu_info())
+    format_unicode_str(report_dict)
