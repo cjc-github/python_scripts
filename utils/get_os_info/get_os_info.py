@@ -191,7 +191,7 @@ def get_cpu_info():
     cpu_dict["CPU核心数"] = cpu_core    
     
     cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
-    cpu_dict["CPU 使用率"] = cpu_usage
+    cpu_dict["CPU 使用率"] = str(cpu_usage) + "%"
     cpu_dict["CPU 赫兹"] = get_cpu_hz()
     
     # 加入cpu信息
@@ -205,11 +205,11 @@ def get_gpu_info():
         if platform.system() == "Windows":
             # Windows
             command = "wmic path win32_VideoController get adapterram, name"
-            gpu_model = subprocess.check_output(command, shell=True).decode().strip().split('\n')[1]
+            gpu_model = subprocess.check_output(command, shell=True).decode().strip().split('\n')[1:]
         elif platform.system() == "Linux":
             # Linux
             command = "lspci | grep -i vga"
-            gpu_model = subprocess.check_output(command, shell=True).decode().strip()
+            gpu_model = subprocess.check_output(command, shell=True).decode().strip().split(": ")[1]
         elif platform.system() == "Darwin":
             # macOS
             command = "system_profiler SPDisplaysDataType | grep 'Chipset Model'"
@@ -287,7 +287,7 @@ def main():
 
 # 还需要封装输出
 if __name__ == "__main__":
-    # main()
+    main()
 
-    print(get_gpu_info())
-    format_unicode_str(report_dict)
+    # print(get_gpu_info())
+    # format_unicode_str(report_dict)
