@@ -1,5 +1,5 @@
 import os
-# import wmi
+import wmi
 import distro
 import psutil
 import platform
@@ -139,8 +139,8 @@ def get_disk_info():
 def get_cpu_hz():
     core_counts = {}
     cpu_core_hz = ""
-    
-    if get_os_identifier() == 3:
+    # windows
+    if get_os_identifier() == 0:
         c = wmi.WMI()
         cpu_info = c.Win32_Processor()
 
@@ -148,7 +148,8 @@ def get_cpu_hz():
             for i in range(cpu.NumberOfLogicalProcessors):
                 current_freq = cpu.CurrentClockSpeed
                 core_counts[current_freq] = core_counts.get(current_freq, 0) + 1
-    elif get_os_identifier() <= 2:
+    # linux
+    elif get_os_identifier() == 1:
         cpu_freq = psutil.cpu_freq(percpu=True)
 
         for freq in cpu_freq:
