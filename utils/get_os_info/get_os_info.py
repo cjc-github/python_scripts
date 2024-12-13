@@ -7,6 +7,8 @@ import argparse
 import subprocess
 import unicodedata
 
+from datetime import datetime
+
 if sys.platform.startswith("win"):
     import wmi
 
@@ -23,13 +25,26 @@ title = "title"
 
 
 # 格式化字典
-def format_unicode_str(dic):
+def format_unicode_str(dic, args):
     # 计算最大键的长度
     def adjusted_length(str):
         return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in str)
 
     max_key_length = max(adjusted_length(key) for key in dic.keys())
-
+    
+    # 保存到文件
+    if args.save:        
+        with open("report.log", "w") as log_file:  # 打开文件以写入
+            for key, value in dic.items():
+                if value == title:
+                    log_file.write("\n" + key + "\n")  # 写入匹配的 key
+                else:
+                    log_file.write(f"{ident}{key} {' ' * (max_key_length - adjusted_length(key))} : {value}\n")  # 写入其他内容
+                    
+            report_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # 获取当前时间，精确到毫秒
+            log_file.write(f"\n报告时间: {report_time}\n")  # 写入报告时间
+    
+    # 打印到终端
     for key, value in dic.items():
         if value == title:
             print("\n" + key)
@@ -203,7 +218,7 @@ def get_cpu_info():
     # 获取 CPU 的物理核心数量
     physical_cpu_count = psutil.cpu_count(logical=False)
     cpu_core = f"{physical_cpu_count}核 {logical_cpu_count}线程"
-    cpu_dict["CPU核心数"] = cpu_core
+    cpu_dict["CPU 核心数"] = cpu_core
 
     cpu_usage = psutil.cpu_percent(interval=1)  # CPU 使用率
     cpu_dict["CPU 使用率"] = f"{cpu_usage}%"
@@ -274,6 +289,8 @@ def parse_argument():
 
     # 添加命令行参数
     parser.add_argument('-d', '--detailed', action='store_true', help='开启详细模式')
+    # 目前这个详细模式暂不支持
+    
     parser.add_argument('-s', '--save', action='store_true', help='保存到文件')
 
     # 解析参数
@@ -284,7 +301,7 @@ def parse_argument():
 # main()函数
 def main():
     args = parse_argument()
-    # print(args)
+    print(args)
 
     # 获取操作系统信息
     get_os_info()
@@ -302,12 +319,9 @@ def main():
     get_disk_info()
 
     # 格式化输出
-    format_unicode_str(report_dict)
+    format_unicode_str(report_dict, args)
 
 
 # 还需要封装输出
 if __name__ == "__main__":
     main()
-
-    # print(get_gpu_info())
-    # format_unicode_str(report_dict)
