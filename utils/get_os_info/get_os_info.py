@@ -1,11 +1,14 @@
 import os
-import wmi
+import sys
 import distro
 import psutil
 import platform
 import argparse
 import subprocess
 import unicodedata
+
+if sys.platform.startswith("win"):
+    import wmi
 
 # key的长度
 key_width = 15
