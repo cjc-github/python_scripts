@@ -1,8 +1,10 @@
-distro
 argparse
 psutil
 pyinstaller
 
+# 获取操作系统的包
+distro
+wmi
 # draw tool
 matplotlib
 
