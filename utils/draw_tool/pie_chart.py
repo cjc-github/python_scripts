@@ -19,8 +19,12 @@ if __name__ == "__main__":
     plt.axis('equal')
 
     # 显示图形
-#     plt.title('饼图示例', fontproperties='SimHei')  # 使用 SimHei 字体显示中文
-    plt.title('饼图示例', fontproperties='Noto Sans CJK')  # 替换为可用的中文字体
+    # plt.title('饼图示例', fontproperties='SimHei')  # 使用 SimHei 字体显示中文
+
+    plt.rcParams['font.family'] = 'WenQuanYi Micro Hei'  # 替换为你选择的字体
+
+
+    plt.title('饼图示例')  # 替换为可用的中文字体
 
     # 保存图形到指定目录
     save_dir = "images"  # 替换为你的目录
