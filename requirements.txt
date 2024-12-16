@@ -8,6 +8,8 @@ wmi
 # draw tool
 matplotlib
 
+# pdf tool
+PyPDF2
 
 # pip
 # -i https://pypi.tuna.tsinghua.edu.cn/simple
