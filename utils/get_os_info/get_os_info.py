@@ -260,29 +260,6 @@ def get_gpu_info():
     report_dict.update(gpu_info)
 
 
-# 获取内存信息
-def get_memory_info1():
-    os_type = platform.system()
-
-    if os_type == "Windows":
-        try:
-            command = "wmic memorychip get manufacturer, capacity, speed, memorytype, partnumber"
-            output = subprocess.check_output(command, shell=True).decode().strip().split('\n')[1:]
-            memory_info = [line.strip() for line in output if line.strip()]
-            print(f"内存信息: {memory_info}")
-        except Exception as e:
-            print(f"获取内存信息失败: {e}")
-    elif os_type == "Linux":
-        try:
-            command = "sudo dmidecode -t memory"
-            output = subprocess.check_output(command, shell=True).decode().strip().split('\n')
-            print(f"内存信息: {output}")
-        except Exception as e:
-            print(f"获取内存信息失败: {e}")
-    else:
-        print("[*] 不支持的操作系统，无法获取内存信息。")
-
-
 # 创建命令行解析器
 def parse_argument():
     parser = argparse.ArgumentParser(description='处理数据的程序')
