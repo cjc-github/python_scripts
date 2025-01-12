@@ -26,24 +26,24 @@ def process_directory(base_path):
                 continue
 
             if os.path.exists(index_file):
-                # if os.path.exists(video_dir):
-                #     # 没有下载完成
-                #     log_entries.append(f"{entry}: 未下载完成")
-                # else:
-                # 存在video视频并不是没有下载完成
-                try:
-                    # 进入目标目录
-                    os.chdir(entry_path)
+                if not os.path.exists(video_dir):
+                    # 没有下载完成
+                    log_entries.append(f"{entry}: 未下载完成")
+                else:
+                    # 存在video视频并不是没有下载完成
+                    try:
+                        # 进入目标目录
+                        os.chdir(entry_path)
 
-                    # 下载完成，且未处理执行 ffmpeg 命令
-                    # ffmpeg_command = f"ffmpeg.exe -i index.m3u8 -c copy {output_file}"
-                    ffmpeg_command = f"ffmpeg.exe -i index.m3u8 -c copy \"{output_file}\""
-                    subprocess.run(ffmpeg_command, shell=True)
-                    # subprocess.run(ffmpeg_command, shell=True, stdout=subprocess.DEVNULL)
+                        # 下载完成，且未处理执行 ffmpeg 命令
+                        # ffmpeg_command = f"ffmpeg.exe -i index.m3u8 -c copy {output_file}"
+                        # ffmpeg_command = f"ffmpeg.exe -i index.m3u8 -c copy \"{output_file}\""
+                        ffmpeg_command = f"ffmpeg.exe -allowed_extensions ALL -i index.m3u8 -c copy \"{output_file}\""
+                        subprocess.run(ffmpeg_command, shell=True)
 
-                    log_entries.append(f"{entry}: 转换成功")
-                except Exception as e:
-                    print("[!]", entry, "执行异常", e)
+                        log_entries.append(f"{entry}: 转换成功")
+                    except Exception as e:
+                        print("[!]", entry, "执行异常", e)
             else:
                 log_entries.append(f"{entry}: 文件异常")
 
