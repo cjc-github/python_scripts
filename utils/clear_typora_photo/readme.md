@@ -38,16 +38,17 @@ python clear_photo.py /your/markdown/dir -s
 
 
 打包为可执行文件
+
 Windows:
 
 ```bash
-pyinstaller.exe -F clear_photo.py
+pyinstaller.exe --onefile --paths ../logging_module clear_photo.py
 ```
 
 Linux:
 
 ```bash
-pyinstaller -F clear_photo.py
+pyinstaller --onefile --paths ../logging_module clear_photo.py
 ```
 
 
@@ -58,3 +59,6 @@ pyinstaller -F clear_photo.py
 5. 注意事项
 删除操作不可恢复，请提前备份重要数据。
 仅会处理 .md 文件及其同名 .assets 文件夹。
+
+
+pyinstaller --onefile --paths ../logging_module clear_photo.py
