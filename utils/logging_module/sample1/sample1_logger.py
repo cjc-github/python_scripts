@@ -3,14 +3,14 @@ import logging
 from datetime import datetime
 
 
-# 一个空的Looger
+# 一个空的Looger, 但是对常见的log函数进行了封装
 class EmptyLogger:
     def __init__(self):
         pass
     
     # info函数
     def info(self, message):
-        print("[+]", message)
+        print(f"[+] {message}")
         
     # warning函数
     def warning(self, message):
@@ -45,7 +45,8 @@ def setup_logging(save_log=True, save_terminal=True, log_prefix="logfile", log_l
     
     # 检查至少一个处理器是否被启用
     if not save_log and not save_terminal:
-        logging.info("Logging is disabled: no output will be generated.")
+        # logging.info("Logging is disabled: no output will be generated.")
+        print("[!] Logging is disabled: no output will be generated.")
         return EmptyLogger()  # 直接返回，不创建处理器
     
     # 使用自定义格式或者默认格式
